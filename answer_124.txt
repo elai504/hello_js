@@ -1,0 +1,53 @@
+Question 1& 2：
+
+Answer:
+Email Sender  GUi has 6 inputs:
+1>To addresses
+2>CC addresses
+3>Bcc addresses
+4> From
+5> Subject
+6> Text body
+
+
+Test strategy:
+a.Input 1, 4, 5, 6 are mandatory fields, one or more than ome of them are missing, there is different error message
+b.Input 1, 2, 3, 4 are email address, there is email address validation, and will pop up error message "please include '@' in the email address" for invalid email address
+c.Input 1, 2, 3 could be multiple values 
+
+d. To simulate mailserver failover, we could run the backend with faike maigun api key or fake sendgrid api key. 
+
+
+
+Mocha test cases: (build.test.js)
+
+NOTE::::::::::::::::::::::  I did not add all the test cases into mocha js file, there could be more comobination accoring to the test stragety.
+
+  Test Email Sender
+    √ Should load the home page without error (2216ms)
+    √ should fail if no subject was provided (4775ms)
+    √ should fail if no content was provided (4260ms)
+    √ should fail if the from email address is invalid (4817ms)
+    √ Should fail if nothing was provided and sumbit (4127ms)
+    √ should fail if the to address is not provided (6180ms)
+	Should success if all the mandatory info was provided:
+
+
+
+
+-----------------------------------------------
+
+Quesiotn 4:
+
+Answer:
+Test approaches  -- 
+Boundary value analysis	: Identify the mandatory input fileds, identify the input validation(correct format). Find the errors at boundaries of input domain.
+error guessing: Based on the experience in prioryt testing, find and guess the typical errors.
+
+
+
+
+
+
+
+
