@@ -1,0 +1,26 @@
+Email Sender  GUi has 6 inputs:
+1>To addresses
+2>CC addresses
+3>Bcc addresses
+4> From
+5> Subject
+6> Text body
+
+
+Test cases:
+Input 1, 4, 5, 6 are mandatory fields, anyone of them are missing, there is different error message
+There is validation for input 4, there is error message "please include '@' in the email address" for invalid email address
+1, 2, 3 could be multiple values for success cases.
+
+-----------------------------------------------
+simulate mailserver failover:
+
+To run backend tests and server:
+java -jar build/libs/siteminder-test-0.1.0.jar --mailgun.apiKey=<INSERT MAILGUN API KEY> --sendgrid.apiKey=<INSERT SENDGRID API KEY HERE>
+
+To simulate mailserver failover, we could run the backend with faike maigun api key or fake sendgrid api key.
+Verify the result is same as two mail servers.
+
+
+
+
