@@ -1,41 +1,35 @@
 const Nightmare = require('nightmare');
-const chai = require('chai');
 var should = require('chai').should();
 
 describe('Test Email Sender', function () {
     this.timeout('30s');
-    var url='http://10.238.129.122:8080/';
+
+    var url = 'http://10.238.129.122:8080/';
+    var to_selector = '#app > form > div:nth-child(2) > div > div.multiselect__tags > span > span';
+    var cc_selector = '#app > form > div:nth-child(3) > div > div.multiselect__tags > input';
+    var bcc_selector = '#app > form > div:nth-child(4) > div > div.multiselect__tags > input';
+    var from_selector = '#app > form > div:nth-child(5) > input';
+    var subject_selector = '#app > form > div:nth-child(6) > input';
+    var body_selector = '#app > form > div:nth-child(7) > textarea';
+    var submit_selector = '#app > form > button';
+
     let nightmare = null;
 
     beforeEach(() => {
         nightmare = new Nightmare()
     });
 
+    afterEach(function () {
+        console.log("afterEach: test finished");
+    });
+
     it('Should load the home page without error', done => {
-        // your actual testing urls will likely be `http://localhost:port/path`
-        nightmare.goto()
+        nightmare.goto(url)
             .end()
             .then(function (result) {
                 done()
             })
             .catch(done)
-    });
-
-    it('Should fail if nothing was provided and sumbit', done => {
-        nightmare
-            .goto(url)
-            .on('page', (type, message) => {
-                if (type == 'error') done()
-            })
-            .click('#app > form > button')
-            .wait(2000)
-            .evaluate(function () {
-                return document.querySelectorAll('#app > form > div:nth-child(5) > p');
-            }, function (result) {
-                result.should.equal('The from is required.');
-                done();
-            })
-            .run();
     });
 
     it('should fail if no subject was provided', done => {
@@ -46,23 +40,20 @@ describe('Test Email Sender', function () {
             .on('page', (type, message) => {
                 if (type === 'error') done()
             })
-            .click('#app > form > button')
-            .wait(2000)
+            .type(from_selector, 'from@gmail.com')
+            .type(body_selector, 'plain body')
+            .click(submit_selector)
+            .wait()
             .evaluate(function () {
-                return document.querySelector('#app > form > div:nth-child(6) > p');
+                return document.querySelector('#app > form > div.form-group.has-error > p');
             }, function (element) {
                 element.innerText.should.equal(expected);
                 done();
             })
-            .run()
-            .catch(done);
+            .run(function () {
+                done()
+            });
     });
-
-    it('should fail if no From was provided', done => {。。。。。。});
-    expected = 'The from is required.';
-
-    it('Should fail if no body was provided', done => {。。。。。。});
-    expected = 'The text is required.';
 
     it('should fail if the from email address is invalid', done => {
         // your actual testing urls will likely be `http://localhost:port/path`
@@ -72,19 +63,65 @@ describe('Test Email Sender', function () {
             .on('page', (type, message) => {
                 if (type === 'error') done()
             })
-            .type('#app > form > div:nth-child(6) > input', 'subjext')
-            .type('#app > form > div:nth-child(7) > textarea', 'plain body')
-            .type('#app > form > div:nth-child(5) > input', 'gmail.com')
-            .click('#app > form > button')
-            .wait(2000)
+            .type(subject_selector, 'subjext')
+            .type(body_selector, 'plain body')
+            .type(from_selector, 'gmail.com')
+            .click(subject_selector)
+            .wait()
             .evaluate(function () {
-                return document.querySelector('#app > form > div.form-group.has-error > p');
+                return document.querySelector('#app > form > div.form-group.has-error > pp');
             }, function (element) {
                 element.innerText.should.equal(expected);
                 done();
             })
-            .run()
-            .catch(done);
+            .run(function () {
+                done()
+            });
+    });
+
+    it('should fail if the to address is not provided', done => {
+        // your actual testing urls will likely be `http://localhost:port/path`
+        var expected = 'Please enter a valid email address.';
+
+        nightmare.goto(url)
+            .on('page', (type, message) => {
+                if (type === 'error') done()
+            })
+            .type(subject_selector, 'subjext')
+            .type(body_selector, 'plain body')
+            .type(from_selector, 'gmail.com')
+            .click(subject_selector)
+            .wait()
+            .evaluate(function () {
+                return document.querySelector('#easy-toast-default > span');
+            }, function (element) {
+                element.innerText.should.equal(expected);
+                done();
+            })
+            .run(function () {
+                done()
+            });
+    });
+
+    it('Should fail if nothing was provided and sumbit', done => {
+        var expected = 'The from is required.';
+
+        nightmare
+            .goto(url)
+            .on('page', (type, message) => {
+                if (type == 'error') done()
+            })
+            .click(subject_selector)
+            .wait(2000)
+            .evaluate(function () {
+                return document.querySelectorAll('#app > form > div:nth-child(5) > p');
+            }, function (element) {
+                element.innerText.should.equal(expected);
+                done();
+            })
+            .run(function () {
+                done()
+            });
     });
 
     it('Should success if all the mandatory info was provided', done => {
@@ -92,25 +129,24 @@ describe('Test Email Sender', function () {
 
         nightmare
             .goto(url)
-            .type('#app > form > div:nth-child(2) > div > div.multiselect__tags > span', 'to@gmail.com')
-            .type('#app > form > div:nth-child(5) > input', 'cc@gmail.com')
-            .type('#app > form > div:nth-child(4) > div > div.multiselect__tags > span > span', 'bcc@gmail.com')
-            .type('#app > form > div:nth-child(6) > input', 'subjext')
-            .type('#app > form > div:nth-child(7) > textarea', 'plain body')
-            .click('#app > form > button')
-            .wait(2000)
+            .type(to_selector, 'to@gmail.com')
+            .type(cc_selector, 'cc@gmail.com')
+            .type(bcc_selector, 'bcc@gmail.com')
+            .type(from_selector, 'from@gmail.com')
+            .type(subject_selector, 'subject')
+            .type(body_selector, 'plain body')
+            .click(subject_selector)
+            .wait()
             .evaluate(function () {
                 return document.querySelector('#result');
             }, function (element) {
                 element.innerText.should.equal(expected);
                 done();
             })
-            .run();
+            .run(function () {
+                done()
+            });
     });
-
-    it('Should success for mutliple email recipients, CCs and BCCs', done => {。。。。。。});
-    it('Should success without CCs', done => {。。。。。。});
-    it('Should success without BCCs', done => {。。。。。。});
 
 
 })
